@@ -9,7 +9,7 @@ function App() {
 
   return (
     <>
-      <h1>My first react pipeline</h1>
+      <h1>My first react pipeline 1</h1>
     </>
   )
 }

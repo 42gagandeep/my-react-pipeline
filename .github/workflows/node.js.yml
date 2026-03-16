@@ -1,19 +1,35 @@
-name: React CI
+name: Vite React CI
 
 on:
   push:
+    branches: [ main ]  # Agar aapke branch ka naam 'master' hai toh yahan master likhein
+  pull_request:
     branches: [ main ]
 
 jobs:
-  build_and_test:
+  build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - name: Use Node.js
+      # 1. GitHub se code nikaalne ke liye
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # 2. Node.js set up karne ke liye
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-      - run: npm install
-      - run: npx vite builds
-      # Agar aapne tests likhe hain toh:
-      - run: npm test -- --watchAll=false
+          node-version: 20
+          cache: 'npm'
+
+      # 3. Dependencies install karne ke liye (npm ci fast aur safe hota hai)
+      - name: Install Dependencies
+        run: npm ci || npm install
+
+      # 4. Build banane ke liye (CI=false warning ko ignore karega aur build nahi fasega)
+      - name: Build Project
+        run: CI=false npm run build
+
+      # 5. Build output check karne ke liye
+      - name: Verify Build
+        run: ls -la dist

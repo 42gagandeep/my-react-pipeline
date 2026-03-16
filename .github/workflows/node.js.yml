@@ -1,0 +1,19 @@
+name: React CI
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm install
+      - run: npm run build
+      # Agar aapne tests likhe hain toh:
+      - run: npm test -- --watchAll=false

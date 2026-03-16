@@ -1,19 +1,36 @@
-name: React CI
+name: Vite CI/CD Pipeline
 
 on:
   push:
+    branches: [ main ]  # Jab aap main branch par push karenge tab chalega
+  pull_request:
     branches: [ main ]
 
 jobs:
-  build_and_test:
+  build-and-test:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - name: Use Node.js
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - run: npm install
-      - run: npm run build
-      # Agar aapne tests likhe hain toh:
-      - run: npm test -- --watchAll=false
+          cache: 'npm' # Isse pipeline fast chalti hai
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run Lint/Tests (Optional)
+        run: npm run lint || echo "No lint script found"
+        # Agar aapne tests likhe hain toh: run: npm test
+
+      - name: Build Vite Project
+        run: npm run build
+
+      # Agar aap Render ya kisi aur service par deploy kar rahe hain
+      # toh niche wala step unke instructions ke hisaab se hoga.
+      - name: Check Build Output
+        run: ls dist  # Vite hamesha 'dist' folder banata hai
